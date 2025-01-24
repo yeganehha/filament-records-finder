@@ -20,7 +20,15 @@
             "email": "me@erfanebrahimi.ir"
         }
     ],
-    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "yeganehha\\FilamentRecordsFinder\\FilamentRecordsFinderServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "keywords": [
         "erfan",
         "ebrahimi",
