@@ -23,7 +23,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "yeganehha\\FilamentRecordsFinder\\FilamentRecordsFinderServiceProvider"
+                "Yeganehha\\FilamentRecordsFinder\\FilamentRecordsFinderServiceProvider"
             ]
         }
     },
