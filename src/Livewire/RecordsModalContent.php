@@ -25,10 +25,21 @@ class RecordsModalContent extends Component implements HasForms, HasTable
         $this->resource  = $resource;
     }
 
+
+    public function getPrimaryKey(): ?string
+    {
+        /** @var Resource $resourceName */
+        $resourceName = $this->resource;
+        $model = $resourceName::getModel();
+        return (new $model)->getKeyName();
+    }
+
+
     public function table(Table $table): Table
     {
         /** @var Resource $resourceName */
         $resourceName = $this->resource;
+        $primryKey = $this->getPrimaryKey();
         return $resourceName::table($table)
             ->selectable()
             ->actions([])
@@ -36,8 +47,8 @@ class RecordsModalContent extends Component implements HasForms, HasTable
                 BulkAction::make('applySelected')
                     ->label( 'انتخاب '. $resourceName::getPluralModelLabel())
                     ->deselectRecordsAfterCompletion()
-                    ->action(function (Collection $selectedRecords) use ($table) {
-                        $table->getLivewire()->dispatch('apply-selected-rows', $selectedRecords);
+                    ->action(function (Collection $selectedRecords) use ($table,$primryKey) {
+                        $table->getLivewire()->dispatch('apply-selected-rows', $selectedRecords->pluck($primryKey));
                     }),
             ])
             ->query($resourceName::getEloquentQuery());
