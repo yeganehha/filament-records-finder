@@ -2,9 +2,12 @@
 
 namespace Yeganehha\FilamentRecordsFinder;
 
+use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Yeganehha\FilamentRecordsFinder\Livewire\RecordsModalContent;
+
 class FilamentRecordsFinderServiceProvider extends PackageServiceProvider
 {
     public static string $name = 'filament-records-finder';
@@ -40,4 +43,8 @@ class FilamentRecordsFinderServiceProvider extends PackageServiceProvider
         }
     }
 
+    public function bootingPackage(): void
+    {
+        Livewire::component('records-modal-content', RecordsModalContent::class);
+    }
 }

@@ -13,7 +13,7 @@
                 </x-filament::button>
             </x-slot>
 
-            @livewire('list-records' , ['resource' => $field->getResource()  ])
+            @livewire('records-modal-content' , ['resource' => $field->getResource()  ])
         </x-filament::modal>
         <div class="flex">
             <div style="display: ruby">
