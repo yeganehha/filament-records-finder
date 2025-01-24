@@ -3,10 +3,10 @@
 namespace Yeganehha\FilamentRecordsFinder\Filament\Forms\Component;
 
 use Closure;
-use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
-class RecordsSelector extends Field
+class RecordsSelector extends Select
 {
 
     protected string $view = 'filament-records-finder::records-selector';
@@ -21,8 +21,15 @@ class RecordsSelector extends Field
     }
 
 
-    public function getRecordTitle(Model|array $record): string
+    public function getRecordTitle(Model|array|string|int $record): string
     {
+        if (  is_string($record) or  is_int($record)){
+            /** @var Resource $resourceName */
+            $resourceName = $this->resource;
+            /** @var Model $ModelName */
+            $ModelName = $resourceName::getModel();
+            $record = $ModelName::query()->find($record);
+        }
         if ( is_array($record) ) {
             /** @var Resource $resourceName */
             $resourceName = $this->resource;
