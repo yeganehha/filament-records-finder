@@ -20,5 +20,13 @@
             "email": "me@erfanebrahimi.ir"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "stable",
+    "keywords": [
+        "erfan",
+        "ebrahimi",
+        "yeganehha",
+        "filament",
+        "multi-select",
+        "select"
+    ]
 }
