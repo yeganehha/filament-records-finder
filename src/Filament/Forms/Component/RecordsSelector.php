@@ -58,6 +58,8 @@ class RecordsSelector extends Select
 
     public function getLabel(): ?string
     {
+        if ( $this->label )
+            return $this->label;
         /** @var Resource $resourceName */
         $resourceName = $this->resource;
         return $resourceName::getModelLabel();
