@@ -14,7 +14,7 @@
                     </x-filament::button>
                 </x-slot>
 
-                @livewire('records-modal-content' , ['resource' => $field->getResource()  ])
+                @livewire('records-modal-content' , ['resource' => $field->getResource() ,'query' => $field->getQuery() ])
             </x-filament::modal>
         @endif
         <div class="flex">

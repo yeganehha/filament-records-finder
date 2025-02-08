@@ -19,10 +19,12 @@ class RecordsModalContent extends Component implements HasForms, HasTable
     use InteractsWithForms;
 
     public string $resource ;
+    public string $specialQueryName ;
 
-    public function mount(string $resource): void
+    public function mount(string $resource , string $query): void
     {
         $this->resource  = $resource;
+        $this->specialQueryName  = $query;
     }
 
 
@@ -39,7 +41,13 @@ class RecordsModalContent extends Component implements HasForms, HasTable
     {
         /** @var Resource $resourceName */
         $resourceName = $this->resource;
-        $primryKey = $this->getPrimaryKey();
+        $primaryKey = $this->getPrimaryKey();
+        if ( $this->specialQueryName == 'getEloquentQuery')
+            $query = $resourceName::getEloquentQuery();
+        else{
+            $queryName =  $this->specialQueryName;
+            $query = $resourceName::$$queryName;
+        }
         return $resourceName::table($table)
             ->selectable()
             ->actions([])
@@ -47,11 +55,11 @@ class RecordsModalContent extends Component implements HasForms, HasTable
                 BulkAction::make('applySelected')
                     ->label( 'انتخاب '. $resourceName::getPluralModelLabel())
                     ->deselectRecordsAfterCompletion()
-                    ->action(function (Collection $selectedRecords) use ($table,$primryKey) {
-                        $table->getLivewire()->dispatch('apply-selected-rows', $selectedRecords->pluck($primryKey));
+                    ->action(function (Collection $selectedRecords) use ($table,$primaryKey) {
+                        $table->getLivewire()->dispatch('apply-selected-rows', $selectedRecords->pluck($primaryKey));
                     }),
             ])
-            ->query($resourceName::getEloquentQuery());
+            ->query($query);
     }
 
     public function render(): View|Factory|Application

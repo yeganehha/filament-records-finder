@@ -14,6 +14,8 @@ class RecordsSelector extends Select
     protected string $resource ;
 
     protected string|Closure $title = 'name';
+    protected ?Closure $query = null ;
+
     public function recordLabelAttribute(string|Closure $title = 'name'): static
     {
         $this->title = $title;
@@ -49,6 +51,12 @@ class RecordsSelector extends Select
         return $this;
     }
 
+    public function query(Closure $query): RecordsSelector
+    {
+        $this->query = $query;
+        return $this;
+    }
+
     public function getPluralLabel(): ?string
     {
         /** @var Resource $resourceName */
@@ -68,5 +76,17 @@ class RecordsSelector extends Select
     public function getResource(): string
     {
         return $this->resource;
+    }
+
+    public function getQuery(): string
+    {
+        if($this->query ){
+            /** @var Resource $resourceName */
+            $resourceName = $this->resource;
+            $resourceName::$SpecialQuery = $resourceName::getEloquentQuery()
+                ->where(fn($builder) => ($this->query)($builder));
+            return 'SpecialQuery';
+        }
+        return 'getEloquentQuery';
     }
 }
