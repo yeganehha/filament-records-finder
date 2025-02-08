@@ -6,6 +6,8 @@ use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
+use Yeganehha\FilamentRecordsFinder\Contract\RecordSelectable;
+
 class RecordsSelector extends Select
 {
 
@@ -14,7 +16,7 @@ class RecordsSelector extends Select
     protected string $resource ;
 
     protected string|Closure $title = 'name';
-    protected ?Closure $query = null ;
+    protected ?string $query = null ;
 
     public function recordLabelAttribute(string|Closure $title = 'name'): static
     {
@@ -48,10 +50,12 @@ class RecordsSelector extends Select
     public function resource(string $resource): RecordsSelector
     {
         $this->resource = $resource;
+        if ( ! (new $resource) instanceof RecordSelectable )
+            Throw new \RuntimeException($resource .' Should implement '. RecordSelectable::class);
         return $this;
     }
 
-    public function query(Closure $query): RecordsSelector
+    public function query(string $query): RecordsSelector
     {
         $this->query = $query;
         return $this;
@@ -78,15 +82,8 @@ class RecordsSelector extends Select
         return $this->resource;
     }
 
-    public function getQuery(): string
+    public function getQuery() : ?string
     {
-        if($this->query ){
-            /** @var Resource $resourceName */
-            $resourceName = $this->resource;
-            $resourceName::$SpecialQuery = $resourceName::getEloquentQuery()
-                ->where(fn($builder) => ($this->query)($builder));
-            return 'SpecialQuery';
-        }
-        return 'getEloquentQuery';
+        return $this->query;
     }
 }

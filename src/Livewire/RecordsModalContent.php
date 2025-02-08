@@ -10,21 +10,26 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Application;
 use Livewire\Component;
 use Illuminate\Database\Eloquent\Collection;
+use Closure;
+
 class RecordsModalContent extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
 
     public string $resource ;
-    public string $specialQueryName ;
+    public ?string $specailQuery ;
+    public array $selected ;
 
-    public function mount(string $resource , string $query): void
+    public function mount(string $resource , ?string $query , array $selected): void
     {
         $this->resource  = $resource;
-        $this->specialQueryName  = $query;
+        $this->selected  = $selected;
+        $this->specailQuery  = $query;
     }
 
 
@@ -41,25 +46,26 @@ class RecordsModalContent extends Component implements HasForms, HasTable
     {
         /** @var Resource $resourceName */
         $resourceName = $this->resource;
-        $primaryKey = $this->getPrimaryKey();
-        if ( $this->specialQueryName == 'getEloquentQuery')
+        $primryKey = $this->getPrimaryKey();
+        if ( $this->specailQuery){
+            $query = $resourceName::getRecordSelectorQuery($this->specailQuery);
+        } else {
             $query = $resourceName::getEloquentQuery();
-        else{
-            $queryName =  $this->specialQueryName;
-            $query = $resourceName::$$queryName;
         }
-        return $resourceName::table($table)
+        $tableObject =  $resourceName::table($table)
             ->selectable()
             ->actions([])
+            ->deselectAllRecordsWhenFiltered(false)
             ->bulkActions([
                 BulkAction::make('applySelected')
                     ->label( 'انتخاب '. $resourceName::getPluralModelLabel())
                     ->deselectRecordsAfterCompletion()
-                    ->action(function (Collection $selectedRecords) use ($table,$primaryKey) {
-                        $table->getLivewire()->dispatch('apply-selected-rows', $selectedRecords->pluck($primaryKey));
+                    ->action(function (Collection $selectedRecords) use ($table,$primryKey) {
+                        $table->getLivewire()->dispatch('apply-selected-rows', $selectedRecords->pluck($primryKey));
                     }),
             ])
             ->query($query);
+        return $tableObject;
     }
 
     public function render(): View|Factory|Application
