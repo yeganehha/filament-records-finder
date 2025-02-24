@@ -2,6 +2,8 @@
 
 namespace Yeganehha\FilamentRecordsFinder;
 
+use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Facades\FilamentAsset;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -46,5 +48,12 @@ class FilamentRecordsFinderServiceProvider extends PackageServiceProvider
     public function bootingPackage(): void
     {
         Livewire::component('records-modal-content', RecordsModalContent::class);
+    }
+
+    public function packageBooted(): void
+    {
+        FilamentAsset::register([
+            AlpineComponent::make('table', __DIR__ . '/../dist/components/table.js'),
+        ], 'yeganehha/filament-records-finder');
     }
 }

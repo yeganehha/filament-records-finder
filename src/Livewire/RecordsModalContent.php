@@ -55,11 +55,12 @@ class RecordsModalContent extends Component implements HasForms, HasTable
         $tableObject =  $resourceName::table($table)
             ->selectable()
             ->actions([])
+            ->view('filament-records-finder::Table')
             ->deselectAllRecordsWhenFiltered(false)
             ->bulkActions([
                 BulkAction::make('applySelected')
                     ->label( 'انتخاب '. $resourceName::getPluralModelLabel())
-                    ->deselectRecordsAfterCompletion()
+//                    ->deselectRecordsAfterCompletion()
                     ->action(function (Collection $selectedRecords) use ($table,$primryKey) {
                         $table->getLivewire()->dispatch('apply-selected-rows', $selectedRecords->pluck($primryKey));
                     }),
